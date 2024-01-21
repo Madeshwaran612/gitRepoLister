@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Git Repo Lister</title>
+        <link rel="stylesheet" href="style.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script type="module" src="myscript.js"></script>
+
+    </head>
+    <body>
+        <section class="header" id="header">
+            <fieldset id="userSearchBar" class="userSearchBar">
+                <legend>Enter the user name</legend>
+                <input placeholder="User name comes here" type="text" class="userNameInput" id="userNameInput"/>
+                <button id="searchButton" class="searchButton" type="submit">List Now</button>
+            </fieldset>
+        </section>
+        <section id="content">
+            <div id="userInfo" class="userInfo">
+                <img id="userImage"/>
+            </div>
+            <div class="repoInfo" id="repoInfo">
+                <Fieldset>
+                    <div class="repoNum"></div>
+                    <div class="repoName"></div>
+                    <div class="repoTopics"></div>
+                </Fieldset>
+            </div>
+
+        </section>
+        <section id="footer" class="footer">
+            <div class="pageCount" id="pageCount">
+            </div>
+        </section>
+    </body>
+</html>
