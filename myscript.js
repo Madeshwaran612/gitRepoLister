@@ -171,8 +171,6 @@ function changeContent(array,perPage) {
 //function initiation
 $(function(){
   $("#searchButton").click(function(){
-    $("#loader").show();
-    $("#loader2").show();
   var userInput=$("#userNameInput").val();
     if (userInput!="") {
       $("#content").find('fieldset').remove();
