@@ -50,7 +50,7 @@ function getFullRepos(userInput,perPage,page) {
   });
 }
 //to get the user details
-function getUserInfo(userInput) {
+function getUserInfo(userInput,perPage) {
   $.get({
     url:`https://api.github.com/users/${userInput}`,
     headers:{
@@ -59,7 +59,7 @@ function getUserInfo(userInput) {
     }).done(function(data){
     $("#content").addClass("content")
     renderuserInfo(data);
-    getFullRepos(userInput,10,1);
+    getFullRepos(userInput,perPage,1);
   }).fail(function(response) {
     if (response.status === 403 && response.responseJSON && response.responseJSON.message.includes("rate limit exceeded")) {
 
@@ -104,7 +104,7 @@ function renderuserInfo(userJson) {
 
 }
 //to determine the no. of pages required as per the user's choice
-function arangingRepo(count,array) {
+function arangingRepo(count,perPage) {
   $("#footer").find("#pageCount").empty();
   var noOfPages=count;
   if (noOfPages>1) {
@@ -120,7 +120,7 @@ function arangingRepo(count,array) {
   } else {
     $("#pageCount").append(`<p class="highlight" data-page-data=${1}>1</p>`);
   }
-  changeContent(1,array);
+  changeContent(1,perPage);
 }
 //to display the selected set of repos
 function changeContent(array,perPage) {
@@ -170,13 +170,20 @@ function changeContent(array,perPage) {
 
 //function initiation
 $(function(){
+  var reposPerPage = parseInt($("#numberSelect").val());
+
+  $("#numberSelect").change(function() {
+    reposPerPage = parseInt($(this).val());
+    
+  });
+
   $("#searchButton").click(function(){
   var userInput=$("#userNameInput").val();
     if (userInput!="") {
       $("#content").find('fieldset').remove();
       $("#pageCount").find("p").remove();
       
-      getUserInfo(userInput);
+      getUserInfo(userInput,reposPerPage);
     } else {
       alert("Please enter the user name");
     }
@@ -188,7 +195,7 @@ $(function(){
     var pageData = $(this).data("page-data");
     // Check if the data attribute exists
     if (pageData) {
-        changeContent(pageData,10);
+        changeContent(pageData,reposPerPage);
         $("p").removeClass("highlight");
         $(this).addClass("highlight")
         // Perform actions based on the page data
@@ -209,7 +216,7 @@ $(function(){
       } else {
         $("#pageCount p").removeClass("highlight");
         $(`p:contains(${String(selectedPage-1)})`).addClass("highlight");
-        changeContent(selectedPage-1,10);
+        changeContent(selectedPage-1,reposPerPage);
       }
       // (selectedPage==1)?null:changeContent(selectedPage-1,10);
     } else {
@@ -220,9 +227,8 @@ $(function(){
       } else {
         $("#pageCount p").removeClass("highlight");
         $(`p:contains(${String(selectedPage+1)})`).addClass("highlight");
-        changeContent(selectedPage+1,10);
+        changeContent(selectedPage+1,reposPerPage);
       }
-      // (selectedPage==parseInt($("#pageCount > p:last").text()))?null:changeContent(selectedPage+1,10);
     }
   });
 

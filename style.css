@@ -16,6 +16,28 @@ input{
     margin-bottom: 10px;
     border-color: white;
 }
+.userSearchBar label{
+    font-size: large;
+    margin: 0 12px;
+}
+.userSearchBar select{
+    min-height: 18px;
+    min-width: 60px;
+    height: 7vh;
+    width: 13vw;
+    text-align: center;
+    background-color: #ab19d83f;
+    border: 2px solid white;
+    border-radius: 50vw;
+    color: white;
+    cursor: pointer;
+}
+.userSearchBar select option{
+    min-height: 18px;
+    min-width: 60px;
+    height: 7vh;
+    width: 13vw;
+}
 button{
     min-height: 18px;
     min-width: 60px;
