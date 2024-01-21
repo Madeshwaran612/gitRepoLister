@@ -31,6 +31,7 @@ button{
     border-color: #ee00ef ;
     cursor: pointer;
     transition: 1.5s;
+    
 }
 .header{
     display: flex;
@@ -51,7 +52,10 @@ legend{
     margin: 0;
     padding: 0;
     outline: solid 2px #210025;
-    
+}
+.topics{
+    margin: 0;
+    background-color: #fff;
 }
 .repoInfo{
     display: grid;
@@ -59,12 +63,26 @@ legend{
 }
 .repoInfo fieldset{
     display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: 50px 100%;
+    grid-template-rows: 1fr;
     text-align: center;
     border-color: #ee00ef ;
     margin: 16px;
-
+}
+.repoInfo fieldset div{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 8px;
+}
+.repoInfo fieldset div h4{
+    background-color: #ab19d83f;
+    margin: 0;
+    padding: 4px;
+    font-size: smaller;
+    font-weight: bolder;
+    color: #fff;
+    border-radius: 50vw;
+    text-align: center;
 }
 .profileBox{
     display: grid;
@@ -97,6 +115,7 @@ legend{
 }
 .profilePic{
     margin: 0;
+    min-width: 80px;
     width: 15vw;
     height: auto;
     border-radius: 50%;
@@ -112,9 +131,29 @@ legend{
     padding: 0 18px;
     cursor: pointer;
 }
+.footer .pageCount button{
+    margin: 0 16px 0 16px;
+}
 .highlight{
     background-color: #ff99ff;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
     color: white;
 }
+
+.loader {
+    border: 8px solid #ee00ef;
+    border-top: 8px solid #ff99ff;
+    border-radius: 40%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    display: none; /* Initially hidden */
+  }
+    
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(280deg); }
+    100%{transform: rotate(360deg);}
+  }
+  

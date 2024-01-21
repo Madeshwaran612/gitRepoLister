@@ -1,60 +1,77 @@
+/*
+The flow of the app is as follows:
+  1. (document).ready function.
+  2. getUserInfo()
+  3. renderuserInfo() && getFullRepos()
+  4. arrangingRepo()
+  5. changeContnt()
+*/
+
+
+
+
+//creating a copy of the json array
 let arrayCopy=[];
 
-
-
+//to get all repos and store it in local array
 function getFullRepos(userInput,perPage,page) {
+  $("#loader").show();
   let nextPage=parseInt(page+1);
   $.get({
-    url:`https://api.github.com/users/${userInput}/repos?per_page=${perPage}&page=${page}`
+    url:`https://api.github.com/users/${userInput}/repos?per_page=${perPage}&page=${page}`,
+    headers:{
+      Authorization:`Bearer`+"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"
+    }
   }).done(function(data){
+    $("#loader").hide();
     if(data.length!=0){
+      
       let length=data.length;
       if (length==perPage) {
         for (let index = 0; index < length; index++) {
           arrayCopy.push(data[index]);          
         }
         getFullRepos(userInput,perPage,nextPage);
+        
       } else {
-        let remainingRepo=length-data.length;
+        let remainingRepo=data.length;
         for (let index = 0; index < remainingRepo; index++) {
           arrayCopy.push(data[index]);          
         }
         arangingRepo(nextPage,perPage);
+        
       }
     }else{
         arangingRepo(nextPage-1,perPage);
     }
   }).fail(function(){
+    $("#loader").hide();
     alert(`The User name ${userInput} is not found`);
   });
 }
-
-
-
-
-// function getRepos(userInput) {
-//   $.get({
-//     url:`https://api.github.com/users/${userInput}/repos`
-//   }).done(function(data){
-//     $("#content").addClass("content");
-//     arangingRepo(data.length,data);
-//   }).fail(function(){
-//     alert(`${userInput} User name not found`);
-//   });
-// }
-
+//to get the user details
 function getUserInfo(userInput) {
   $.get({
-    url:`https://api.github.com/users/${userInput}`
-  }).done(function(data){
-    
+    url:`https://api.github.com/users/${userInput}`,
+    headers:{
+      Authorization:`Bearer`+"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"
+    }
+    }).done(function(data){
+    $("#content").addClass("content")
     renderuserInfo(data);
     getFullRepos(userInput,10,1);
-  }).fail(function(){
-    alert(`${userInput} User name not found`);
-  });
-}
+  }).fail(function(response) {
+    if (response.status === 403 && response.responseJSON && response.responseJSON.message.includes("rate limit exceeded")) {
 
+        console.log("API Rate limit exceeded. Waiting before retrying...");
+    } else {
+        console.error("Error:", response);
+        alert(`Error: ${response.statusText}`);
+    }
+});
+
+}
+//to render the retrieved user details in the browser
 function renderuserInfo(userJson) {
   $("#userInfo").empty();
 
@@ -86,12 +103,12 @@ function renderuserInfo(userJson) {
     $("#userInfo").html(infoHtml);
 
 }
-
+//to determine the no. of pages required as per the user's choice
 function arangingRepo(count,array) {
   $("#footer").find("#pageCount").empty();
   var noOfPages=count;
   if (noOfPages>1) {
-    
+    $("#pageCount").append(`<button>Previous</button>`);
     for (let index = 0; index < noOfPages-1; index++) {
       if (index==0) {
         $("#pageCount").append(`<p class="highlight" data-page-data="${index+1}">${index+1}</p>`);
@@ -99,40 +116,26 @@ function arangingRepo(count,array) {
         $("#pageCount").append(`<p data-page-data="${index+1}">${index+1}</p>`);
       }
     }
+    $("#pageCount").append(`<button>Next</button>`);
   } else {
     $("#pageCount").append(`<p class="highlight" data-page-data=${1}>1</p>`);
   }
   changeContent(1,array);
 }
-
+//to display the selected set of repos
 function changeContent(array,perPage) {
   
   let name,topic;
-  // if (typeof(array)==='object') {
-  //   arrayCopy=array;
-  //   for (let index = 0; index < 10; index++) {
-  //     name = array[index].name;
-  //     topic=array[index].topics;
-
-  //     let listHtml=`
-  //       <fieldset>
-  //         <h3>${parseInt(index+1)}</h3>
-  //         <h1>${name}</h1>
-  //         ${topic.map(topicItem => `<h4>${topicItem}</h4>`).join('')}
-  //       </fieldset>`
-  //       $("#repoInfo").append(listHtml);
-  //   }
-          
-  // }
-  if (typeof(array)==='number') {
+  
     $("#content").find('fieldset').remove();
     var finalArray=arrayCopy;
     var limit=finalArray.length;
     var toDisplay=parseInt(array)*perPage
+
     if (toDisplay>limit) {
       var toDisplay=limit%perPage;
       var indexOfArray=limit-toDisplay;
-
+      console.log(indexOfArray,toDisplay,limit);
       for (let i = indexOfArray; i < limit; i++) {
 
         name = finalArray[i].name;
@@ -141,7 +144,9 @@ function changeContent(array,perPage) {
           <fieldset>
             <h3>${parseInt(i+1)}</h3>
             <h1>${name}</h1>
-            ${topic.map(topicItem => `<h4>${topicItem}</h4>`).join('')}
+            <div>
+            ${topic.map(topicItem => `<h4 class="topic">${topicItem}</h4>`).join('')}
+            </div>
             </fieldset>`
           $("#repoInfo").append(listHtml);  
       }
@@ -154,22 +159,25 @@ function changeContent(array,perPage) {
           <fieldset>
             <h3>${parseInt(index+1)}</h3>
             <h1>${name}</h1>
-            ${topic.map(topicItem => `<h4>${topicItem}</h4>`).join('')}
+            ${topic.map(topicItem => `<h4 class="topic">${topicItem}</h4>`).join('')}
           </fieldset>`
           $("#repoInfo").append(listHtml);
       }
     }
     
-  }
+  
   }
 
-
+//function initiation
 $(function(){
   $("#searchButton").click(function(){
-    
+    $("#loader").show();
+    $("#loader2").show();
   var userInput=$("#userNameInput").val();
     if (userInput!="") {
       $("#content").find('fieldset').remove();
+      $("#pageCount").find("p").remove();
+      
       getUserInfo(userInput);
     } else {
       alert("Please enter the user name");
@@ -192,109 +200,36 @@ $(function(){
     }
 });
 
+  $("#pageCount").on("click","button",function(){
+    var clicked=$(this).text();
+
+    if (clicked==='Previous') {
+      var selected=$("[class='highlight']");
+      var selectedPage=parseInt(selected.text());
+      if (selectedPage==1) {
+        null;
+      } else {
+        $("#pageCount p").removeClass("highlight");
+        $(`p:contains(${String(selectedPage-1)})`).addClass("highlight");
+        changeContent(selectedPage-1,10);
+      }
+      // (selectedPage==1)?null:changeContent(selectedPage-1,10);
+    } else {
+      var selected=$("[class='highlight']");
+      var selectedPage=parseInt(selected.text());
+      if (selectedPage==parseInt($("#pageCount > p:last").text())) {
+        null;
+      } else {
+        $("#pageCount p").removeClass("highlight");
+        $(`p:contains(${String(selectedPage+1)})`).addClass("highlight");
+        changeContent(selectedPage+1,10);
+      }
+      // (selectedPage==parseInt($("#pageCount > p:last").text()))?null:changeContent(selectedPage+1,10);
+    }
+  });
+
   
 
 });
-
-
-// $(function(){
-    
-//     $("#searchButton").click(function(){
-      
-//       var userInput=$("#userNameInput").val();
-//         console.log(userInput)
-//         if (userInput!="") {
-//           getRepos(userInput);
-//           getUserProfile(userInput);
-            
-//         }else {
-//             $("#userNameInput").prop("placeholder", "search cannot be empty")
-//         }
-//     });
-// });
-
-// function getRepos(userInput) {
-//   let reposData;
-//   return $.get({
-//     url: 'https://api.github.com/users/'+userInput+'/repos',
-//     dataType: 'json',
-//   })
-//   .done(function (data) {
-//     // Success callback
-//     reposData = data;
-//     console.log('reposData');
-//     console.log(reposData);
-//     let name,language;
-//     $("#content").find('fieldset').remove();
-//     $.each(reposData,function(index,repo){
-//       name=repo.name;
-//       language=repo.language;
-//       let listHtml=`
-//       <fieldset>
-//         <em>${parseInt(index+1)}</em>
-//         <h1>${name}</h1>
-//         <h4>${language}</h4>
-//       </fieldset>`
-//       $("#content").append(listHtml);
-//     });
-//   })
-//   .fail(function () {
-//     // Error callback
-//     alert("No User in the name "+userInput+" is found");
-//     // You can add further error handling here if needed
-//   });
-// }
-
-// function getUserProfile(userInput){
-//   let userData;
-//   $.get({
-//     url:`https://api.github.com/users/${userInput}`,
-//     dataType: "json"
-//   }).done(function(data){
-//     $("#userInfo").empty();
-
-//     userData=data;
-//     let userPic=userData.avatar_url;
-//     let userName=userData.login;
-//     let userBio=userData.bio;
-//     let userLocation=userData.location;
-//     let userTwitterId=userData.twitter_username;
-//     let userGitId=`https://github.com/${userName}`
-
-//     let infoHtml=`
-//     <section class="profileBox">
-//     <div class="imageBox">
-//       <img class="profilePic" src='${userPic}/>'
-//     </div>
-//     <div class="userInfoBox">
-//       <h2>${userName}</h2>
-//       <h4>${userBio}</h4>
-//       <h4>${userLocation}</h4>
-//       <h4>${userTwitterId}</h4>
-//     </div>
-//     <div class="gitIdBox">
-//     <h5>${userGitId}</h4>
-//     </div>
-//     </section>
-//     `
-
-//     $("#userInfo").html(infoHtml);
-//   }).fail(function(e){
-//     console.log(e);
-//   })
-// }
-
-// function imgReturn(src){
-//   $("#userImage").attr("src",src);
-//   console.log(src);
-// }
-
-
-
-
-
-
-
-
 
 
