@@ -92,10 +92,10 @@ function renderuserInfo(userJson) {
         <h2>${userName}</h2>
         <h4>${userBio}</h4>
         <h4>${userLocation}</h4>
-        <h4>${userTwitterId}</h4>
+        <h4 id="twitter">${userTwitterId}</h4>
       </div>
       <div class="gitIdBox">
-        <h5>${userGitId}</h4>
+        <h5 id="github">${userGitId}</h4>
       </div>
     </section>
     `
@@ -178,6 +178,7 @@ $(function(){
   });
 
   $("#searchButton").click(function(){
+    arrayCopy.length=0;
   var userInput=$("#userNameInput").val();
     if (userInput!="") {
       $("#content").find('fieldset').remove();
@@ -203,6 +204,18 @@ $(function(){
         alert(`Page ${clickedPage} clicked`);
         // Perform default actions if no data is associated
     }
+});
+
+$("#twitter").click(function(){
+  var twitterLink = $("#twitter").text();
+  if (twitterLink !== 'Twitter not Linked') {
+    window.location.href = twitterLink;
+  }
+});
+
+$("#github").click(function(){
+  var gitLink = $("#github").text();
+  window.location.href = gitLink;
 });
 
   $("#pageCount").on("click","button",function(){

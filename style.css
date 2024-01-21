@@ -70,6 +70,18 @@ legend{
 .header fieldset{
     border: none;
 }
+#twitter,#github{
+    cursor: pointer;
+}
+#twitter:hover{
+    color: #fff;
+    cursor: pointer;
+}
+#github:hover{
+    color: #fff;
+    cursor: pointer;
+}
+
 .content{
     margin: 0;
     padding: 0;
