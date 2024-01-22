@@ -179,6 +179,7 @@ $(function(){
 
   $("#searchButton").click(function(){
     arrayCopy.length=0;
+    $("#header").css("height","auto");
   var userInput=$("#userNameInput").val();
     if (userInput!="") {
       $("#content").find('fieldset').remove();
