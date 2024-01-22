@@ -13,6 +13,42 @@ The flow of the app is as follows:
 //creating a copy of the json array
 let arrayCopy=[];
 
+function getSearchResult(term){
+
+  var resultMatch = arrayCopy.filter(repo => repo.name.includes(term));
+
+  if (resultMatch.length > 0) {
+    renderSearchResult(resultMatch);
+  } else {
+    $("#searchBox").find('fieldset').remove();
+    $("#searchBox").find('h1').remove();
+    
+    var html = `
+    <h1>There is no such repositories</h1>
+    `
+    $("#searchBox").append(html);
+  }
+
+}
+
+function renderSearchResult(copy) {
+  $("#searchBox").find('fieldset').remove();
+  $("#searchBox").find('h1').remove();
+  var i=1;
+  copy.forEach(repo => {
+    var repoHtml = `
+    <fieldset>
+    <h3>${parseInt(i++)}</h3>
+    <h1>${repo.name}</h1>
+    <div>
+    ${repo.topics.map(topicItem => `<h4 class="topic">${topicItem}</h4>`).join('')}
+    </div>
+    </fieldset>
+    `;
+    $("#searchBox").append(repoHtml);
+  });
+}
+
 //to get all repos and store it in local array
 function getFullRepos(userInput,perPage,page) {
   $("#loader").show();
@@ -74,7 +110,8 @@ function getUserInfo(userInput,perPage) {
 //to render the retrieved user details in the browser
 function renderuserInfo(userJson) {
   $("#userInfo").empty();
-
+  $("#searchBox").find("fieldset").remove();
+  $("#searchBox").find('h1').remove();
     var userData=userJson;
     let userPic=userData.avatar_url;
     let userName=userData.login;
@@ -166,7 +203,19 @@ function changeContent(array,perPage) {
           $("#repoInfo").append(listHtml);
       }
     }
-    
+  $("#searchBox").append(`<input placeholder="Search for a repository" type="text" class="searchText" id="searchText"/>
+  `);
+
+  $("#searchText").on("input",function(){
+    var searchTerm=$("#searchText").val();
+    if (searchTerm==="") {
+      $("#searchBox").find('fieldset').remove();
+    $("#searchBox").find('h1').remove();
+    } else {
+      getSearchResult(searchTerm);
+
+    }
+  })
   
   }
 
@@ -186,7 +235,7 @@ $(function(){
     if (userInput!="") {
       $("#content").find('fieldset').remove();
       $("#pageCount").find("p").remove();
-      
+      $("#searchBox").empty();
       getUserInfo(userInput,reposPerPage);
     } else {
       alert("Please enter the user name");
