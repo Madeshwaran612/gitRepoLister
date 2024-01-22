@@ -248,9 +248,11 @@ $(function(){
     var pageData = $(this).data("page-data");
     // Check if the data attribute exists
     if (pageData) {
+      $("#searchBox").empty();
         changeContent(pageData,reposPerPage);
         $("p").removeClass("highlight");
         $(this).addClass("highlight")
+        
         // Perform actions based on the page data
     } else {
         alert(`Page ${clickedPage} clicked`);
@@ -258,17 +260,6 @@ $(function(){
     }
 });
 
-// $("#twitter").click(function(){
-//   var twitterLink = $("#twitter").text();
-//   if (twitterLink !== 'Twitter not Linked') {
-//     window.location.href = twitterLink;
-//   }
-// });
-
-// $("#github").click(function(){
-//   var gitLink = $("#github").text();
-//   window.location.href = gitLink;
-// });
 
   $("#pageCount").on("click","button",function(){
     var clicked=$(this).text();
@@ -279,9 +270,11 @@ $(function(){
       if (selectedPage==1) {
         null;
       } else {
+        $("#searchBox").empty();
         $("#pageCount p").removeClass("highlight");
         $(`p:contains(${String(selectedPage-1)})`).addClass("highlight");
         changeContent(selectedPage-1,reposPerPage);
+        
       }
       // (selectedPage==1)?null:changeContent(selectedPage-1,10);
     } else {
@@ -290,6 +283,7 @@ $(function(){
       if (selectedPage==parseInt($("#pageCount > p:last").text())) {
         null;
       } else {
+        $("#searchBox").empty();
         $("#pageCount p").removeClass("highlight");
         $(`p:contains(${String(selectedPage+1)})`).addClass("highlight");
         changeContent(selectedPage+1,reposPerPage);
