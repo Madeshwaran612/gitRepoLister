@@ -4,6 +4,7 @@ font-family: Garamond;
 background-color: #210025;
 color: #ff99ff;
 }
+
 input{
     text-align: center;
     border-radius: 16px;
@@ -61,6 +62,7 @@ button{
     align-items: center;
     text-align: center;
     height: 100vh;
+    transition: 10s;
 }
 legend{
     font-size: 32px;

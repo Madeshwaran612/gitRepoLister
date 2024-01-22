@@ -82,7 +82,6 @@ function renderuserInfo(userJson) {
     let userLocation=(userData.location==null)?"":userData.location;
     var userTwitterId=(userData.twitter_username==null)?"Twitter not Linked":userData.twitter_username;
     let userGitId=`https://github.com/${userName}`
-
     let infoHtml=`
     <section class="profileBox">
       <div class="imageBox">
@@ -92,10 +91,13 @@ function renderuserInfo(userJson) {
         <h2>${userName}</h2>
         <h4>${userBio}</h4>
         <h4>${userLocation}</h4>
-        <h4 id="twitter">${userTwitterId}</h4>
+        ${userTwitterId === "Twitter not Linked" ?
+          `<h4 id="twitter">${userTwitterId}</h4>` :
+          `<a target="_blank" href="${userTwitterId}"><h4 id="twitter">${userTwitterId}</h4></a>`
+        }
       </div>
       <div class="gitIdBox">
-        <h5 id="github">${userGitId}</h4>
+        <a target="_blank" href="${userGitId}"><h5 id="github">${userGitId}</h4></a>
       </div>
     </section>
     `
@@ -207,17 +209,17 @@ $(function(){
     }
 });
 
-$("#twitter").click(function(){
-  var twitterLink = $("#twitter").text();
-  if (twitterLink !== 'Twitter not Linked') {
-    window.location.href = twitterLink;
-  }
-});
+// $("#twitter").click(function(){
+//   var twitterLink = $("#twitter").text();
+//   if (twitterLink !== 'Twitter not Linked') {
+//     window.location.href = twitterLink;
+//   }
+// });
 
-$("#github").click(function(){
-  var gitLink = $("#github").text();
-  window.location.href = gitLink;
-});
+// $("#github").click(function(){
+//   var gitLink = $("#github").text();
+//   window.location.href = gitLink;
+// });
 
   $("#pageCount").on("click","button",function(){
     var clicked=$(this).text();
